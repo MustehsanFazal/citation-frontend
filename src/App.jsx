@@ -9,7 +9,6 @@ function App() {
     setLoading(true);
     try {
       const response = await fetch(`https://citation-backend-ci6r.onrender.com/generate-citation?ecli=${encodeURIComponent(ecli)}`);
-
     
 
       const result = await response.json();
