@@ -2,7 +2,6 @@
   "name": "citation-frontend",
   "version": "1.0.0",
   "homepage": "https://MustehsanFazal.github.io/citation-frontend",
-
   "scripts": {
     "dev": "vite",
     "build": "vite build",
