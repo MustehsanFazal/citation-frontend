@@ -1,39 +1,51 @@
-import { useState } from "react";
-import axios from "axios";
+import { useState } from 'react';
 
 function App() {
-  const [ecli, setEcli] = useState("");
-  const [result, setResult] = useState(null);
+  const [ecli, setEcli] = useState('');
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSearch = async () => {
+    setLoading(true);
     try {
-      const res = await axios.post("http://localhost:5000/api/scrape", { ecli });
-      setResult(res.data);
-    } catch (error) {
-      alert("Fout bij ophalen data");
+      const response = await fetch('https://citation-backend-ci6r.onrender.com', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ecli })
+      });
+
+      const result = await response.json();
+      setData(result);
+    } catch (err) {
+      console.error('❌ Fout bij ophalen:', err);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="p-6 max-w-xl mx-auto">
-      <h1 className="text-xl font-bold mb-4">Zoek op ECLI</h1>
-      <form onSubmit={handleSubmit}>
-        <input
-          value={ecli}
-          onChange={(e) => setEcli(e.target.value)}
-          className="border p-2 w-full mb-4"
-          placeholder="Voer ECLI in..."
-        />
-        <button className="bg-blue-600 text-white px-4 py-2 rounded" type="submit">
-          Zoek
-        </button>
-      </form>
+    <div style={{ padding: 20 }}>
+      <h1>Zoek uitspraak</h1>
+      <input
+        type="text"
+        value={ecli}
+        onChange={e => setEcli(e.target.value)}
+        placeholder="Voer ECLI in"
+        style={{ marginRight: 10 }}
+      />
+      <button onClick={handleSearch} disabled={loading}>
+        {loading ? 'Bezig...' : 'Zoeken'}
+      </button>
 
-      {result && (
-        <div className="mt-6">
-          <h2 className="font-semibold">Resultaat:</h2>
-          <pre className="bg-gray-100 p-4 mt-2">{JSON.stringify(result, null, 2)}</pre>
+      {data && (
+        <div style={{ marginTop: 20 }}>
+          <h2>Resultaat:</h2>
+          <p><strong>Instantie:</strong> {data.instantie}</p>
+          <p><strong>Datum uitspraak:</strong> {data.datum_uitspraak}</p>
+          <p><strong>Datum publicatie:</strong> {data.datum_publicatie}</p>
+          <p><strong>Zaaknummer:</strong> {data.zaaknummer}</p>
+          <p><strong>Rechtsgebieden:</strong> {data.rechtsgebieden}</p>
+          <p><strong>Inhoudsindicatie:</strong> {data.inhoudsindicatie}</p>
         </div>
       )}
     </div>

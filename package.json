@@ -1,11 +1,13 @@
 {
   "name": "citation-frontend",
   "version": "1.0.0",
+  "homepage": "https://MustehsanFazal.github.io/citation-frontend",
+
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist"
+    "deploy": "gh-pages -d build"
   },
   "dependencies": {
     "react": "^18.0.0",
