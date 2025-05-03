@@ -8,7 +8,7 @@ function App() {
   const handleSearch = async () => {
     setLoading(true);
     try {
-      const response = await fetch("https://citation-backend-ci6r.onrender.com/generate-citation", {
+      const response = await fetch(`https://citation-backend-ci6r.onrender.com/generate-citation?ecli=${encodeURIComponent(ecli)}`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
