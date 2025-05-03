@@ -1,52 +1,43 @@
-import { useState } from "react"
+import { useState } from "react";
+import axios from "axios";
 
-export default function CitationGenerator() {
-  const [ecli, setEcli] = useState("")
-  const [citation, setCitation] = useState("")
-  const [loading, setLoading] = useState(false)
+function App() {
+  const [ecli, setEcli] = useState("");
+  const [result, setResult] = useState(null);
 
-  const handleGenerate = async () => {
-    setLoading(true)
-    setCitation("")
-
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
-      const response = await fetch("https://citation-api-theta.vercel.app/api/generate-citation", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ecli }),
-      })
-
-      const data = await response.json()
-      if (data.citation) {
-        setCitation(data.citation)
-      } else {
-        setCitation("Geen geldige uitspraak gevonden voor deze ECLI.")
-      }
-    } catch (err) {
-      setCitation("Er is een fout opgetreden bij het genereren van de citatie.")
-    } finally {
-      setLoading(false)
+      const res = await axios.post("http://localhost:5000/api/scrape", { ecli });
+      setResult(res.data);
+    } catch (error) {
+      alert("Fout bij ophalen data");
     }
-  }
+  };
 
   return (
-    <div style={{ maxWidth: '600px', margin: '2rem auto' }}>
-      <h1>Juridische Citatie Generator</h1>
-      <input
-        placeholder="Bijv. ECLI:NL:HR:2016:162"
-        value={ecli}
-        onChange={(e) => setEcli(e.target.value)}
-        style={{ width: '100%', padding: '0.5rem', marginBottom: '1rem' }}
-      />
-      <button onClick={handleGenerate} disabled={loading || !ecli}>
-        {loading ? "Bezig..." : "Genereer Citatie"}
-      </button>
-      {citation && (
-        <div style={{ marginTop: '1rem', backgroundColor: '#f0f0f0', padding: '1rem' }}>
-          <strong>Gegenereerde citatie:</strong>
-          <p>{citation}</p>
+    <div className="p-6 max-w-xl mx-auto">
+      <h1 className="text-xl font-bold mb-4">Zoek op ECLI</h1>
+      <form onSubmit={handleSubmit}>
+        <input
+          value={ecli}
+          onChange={(e) => setEcli(e.target.value)}
+          className="border p-2 w-full mb-4"
+          placeholder="Voer ECLI in..."
+        />
+        <button className="bg-blue-600 text-white px-4 py-2 rounded" type="submit">
+          Zoek
+        </button>
+      </form>
+
+      {result && (
+        <div className="mt-6">
+          <h2 className="font-semibold">Resultaat:</h2>
+          <pre className="bg-gray-100 p-4 mt-2">{JSON.stringify(result, null, 2)}</pre>
         </div>
       )}
     </div>
-  )
+  );
 }
+
+export default App;
